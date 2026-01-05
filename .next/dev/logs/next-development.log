@@ -1,0 +1,43 @@
+[00:00:00.655] Server  LOG     ✓ Ready in 506ms
+[00:00:04.721] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:05.767] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:13.730] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:15.254] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:15.682] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:16.093] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:03:50.233] Server  LOG     ✓ Compiled in 0ms
+[00:03:58.694] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:16:38.959] Server  LOG     ✓ Compiled in 40ms
+[02:36:39.530] Server  LOG     ✓ Compiled in 0ms
+[02:36:39.743] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:36:39.768] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:36:47.999] Server  LOG     ✓ Compiled in 510ms
+[02:37:07.715] Server  LOG     ✓ Compiled in 44ms
+[02:37:15.837] Server  LOG     ✓ Compiled in 40ms
+[02:37:23.643] Server  LOG     ✓ Compiled in 49ms
+[02:37:31.169] Server  LOG     ✓ Compiled in 23ms
+[02:37:38.313] Server  LOG     ✓ Compiled in 21ms
+[02:37:46.505] Server  LOG     ✓ Compiled in 22ms
+[02:37:55.213] Server  LOG     ✓ Compiled in 71ms
+[02:38:04.212] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:38:04.218] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:38:14.986] Server  ERROR   ⨯ ReferenceError: geistMono is not defined
+[02:38:14.997] Server  ERROR   ⨯ ReferenceError: geistMono is not defined
+[02:38:15.019] Server  ERROR   ⨯ ReferenceError: geistMono is not defined
+[02:38:15.076] Server  ERROR   ⨯ ReferenceError: geistMono is not defined
+[02:38:15.086] Server  ERROR   ⨯ ReferenceError: geistMono is not defined
+[02:38:15.098] Server  ERROR   ⨯ ReferenceError: geistMono is not defined
+[02:38:15.129] Server  ERROR   ⨯ ReferenceError: geistMono is not defined
+[02:38:15.172] Server  LOG     ✓ Compiled in 6ms
+[02:38:15.253] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:38:15.253] Browser ERROR   uncaughtError: ReferenceError: geistMono is not defined
+[02:38:15.256] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:38:15.256] Browser ERROR   uncaughtError: ReferenceError: geistMono is not defined
+[02:38:19.356] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:38:19.357] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:38:28.307] Server  LOG     ✓ Compiled in 507ms
+[02:39:11.867] Server  LOG     ✓ Compiled in 41ms
+[02:39:20.111] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:40:36.422] Server  LOG     ✓ Compiled in 503ms
+[02:43:46.631] Server  LOG     ✓ Compiled in 26ms
+[02:44:27.949] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold

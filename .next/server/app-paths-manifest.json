@@ -1,0 +1,19 @@
+{
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/create-checkout/route": "app/api/create-checkout/route.js",
+  "/api/fix-plan/route": "app/api/fix-plan/route.js",
+  "/api/reset-plan/route": "app/api/reset-plan/route.js",
+  "/api/score-signup/route": "app/api/score-signup/route.js",
+  "/api/upgrade-plan/route": "app/api/upgrade-plan/route.js",
+  "/api/waitlist/signup/route": "app/api/waitlist/signup/route.js",
+  "/api/webhooks/stripe/route": "app/api/webhooks/stripe/route.js",
+  "/auth/callback/route": "app/auth/callback/route.js",
+  "/auth/signout/route": "app/auth/signout/route.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/dashboard/waitlist/[id]/page": "app/dashboard/waitlist/[id]/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/login/page": "app/login/page.js",
+  "/page": "app/page.js",
+  "/w/[id]/page": "app/w/[id]/page.js"
+}
