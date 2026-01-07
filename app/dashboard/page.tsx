@@ -13,9 +13,10 @@ export default async function Dashboard() {
     // #region agent log
     fetch('http://127.0.0.1:7244/ingest/382c8fcb-0fa3-42bd-87b1-6fecf8b7a1fb',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app/dashboard/page.tsx:afterCreateClient',message:'Supabase client created successfully',data:{hasAuth:!!supabase?.auth},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H5'})}).catch(()=>{});
     // #endregion
-  } catch (e: any) {
+  } catch (e: unknown) {
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/382c8fcb-0fa3-42bd-87b1-6fecf8b7a1fb',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app/dashboard/page.tsx:createClientError',message:'createClient threw error',data:{error:e?.message},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H5'})}).catch(()=>{});
+    const errorMessage = e instanceof Error ? e.message : String(e)
+    fetch('http://127.0.0.1:7244/ingest/382c8fcb-0fa3-42bd-87b1-6fecf8b7a1fb',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app/dashboard/page.tsx:createClientError',message:'createClient threw error',data:{error:errorMessage},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H5'})}).catch(()=>{});
     // #endregion
     throw e;
   }
