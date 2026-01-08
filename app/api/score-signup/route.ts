@@ -252,7 +252,7 @@ export async function POST(req: NextRequest) {
       type: 'magiclink',
       email: signup.email,
       options: {
-        emailRedirectTo: `${baseUrl}/auth/callback`,
+        redirectTo: `${baseUrl}/auth/callback`,
         data: {
           score: scoringResult.score,
           template: emailTemplate,

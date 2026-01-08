@@ -17,21 +17,14 @@ export async function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          // #region agent log
-          try { const val = cookieStore.get(name)?.value; fetch('http://127.0.0.1:7244/ingest/382c8fcb-0fa3-42bd-87b1-6fecf8b7a1fb',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/supabase.ts:get',message:'cookie get called',data:{name,hasValue:!!val},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H2'})}).catch(()=>{}); return val; } catch(e:unknown) { const errorMessage = e instanceof Error ? e.message : String(e); fetch('http://127.0.0.1:7244/ingest/382c8fcb-0fa3-42bd-87b1-6fecf8b7a1fb',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/supabase.ts:get:error',message:'cookie get error',data:{name,error:errorMessage},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H1'})}).catch(()=>{}); throw e; }
-          // #endregion
+        getAll() {
+          return cookieStore.getAll()
         },
-        set(name: string, value: string, options: { maxAge?: number; domain?: string; path?: string; sameSite?: string; secure?: boolean }) {
+        setAll(cookiesToSet) {
           try {
-            cookieStore.set(name, value, options)
-          } catch {
-            // Ignore errors in Server Components
-          }
-        },
-        remove(name: string, options: { maxAge?: number; domain?: string; path?: string; sameSite?: string; secure?: boolean }) {
-          try {
-            cookieStore.set(name, '', { ...options, maxAge: 0 })
+            cookiesToSet.forEach(({ name, value, options }) => {
+              cookieStore.set(name, value, options)
+            })
           } catch {
             // Ignore errors in Server Components
           }

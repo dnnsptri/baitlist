@@ -5,24 +5,17 @@ import { createAdminClient } from '@/lib/supabase-admin'
 // Required for Stripe webhooks - prevents body parsing
 export const runtime = 'nodejs'
 
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
-
-// Log at module load time to verify the route is registered
-console.log('[stripe-webhook] Route module loaded', {
-  hasStripeKey: !!stripeSecretKey,
-  hasWebhookSecret: !!webhookSecret,
-  timestamp: new Date().toISOString(),
-})
-
-if (!stripeSecretKey) {
-  throw new Error('STRIPE_SECRET_KEY is not set')
+// Lazy initialization to avoid build-time errors when env vars aren't set
+function getStripe() {
+  const stripeSecretKey = process.env.STRIPE_SECRET_KEY
+  if (!stripeSecretKey) {
+    throw new Error('STRIPE_SECRET_KEY is not set')
+  }
+  return new Stripe(stripeSecretKey, {
+    apiVersion: '2025-12-15.clover',
+    typescript: true,
+  })
 }
-
-const stripe = new Stripe(stripeSecretKey, {
-  apiVersion: '2025-12-15.clover',
-  typescript: true,
-})
 
 export async function POST(req: NextRequest) {
   // FIRST LOG - should appear for ANY request to this endpoint
@@ -31,6 +24,7 @@ export async function POST(req: NextRequest) {
   console.log('[stripe-webhook] Request method:', req.method)
   console.log('[stripe-webhook] Timestamp:', new Date().toISOString())
 
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
   if (!webhookSecret) {
     console.error('[stripe-webhook] Missing STRIPE_WEBHOOK_SECRET')
     return NextResponse.json({ error: 'Webhook not configured' }, { status: 500 })
@@ -48,6 +42,7 @@ export async function POST(req: NextRequest) {
   let rawBody: string
 
   try {
+    const stripe = getStripe()
     rawBody = await req.text()
     console.log('[stripe-webhook] Raw body length:', rawBody.length)
     event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret)
@@ -140,6 +135,7 @@ export async function POST(req: NextRequest) {
 // GET handler for testing if the route is accessible
 export async function GET() {
   console.log('[stripe-webhook] GET request received - route is accessible')
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
   return NextResponse.json({ 
     status: 'Webhook endpoint is accessible',
     hasWebhookSecret: !!webhookSecret,

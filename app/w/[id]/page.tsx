@@ -137,54 +137,6 @@ export default function PublicSignupPage() {
     )
   }
 
-  if (submitted) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
-          <div className="text-5xl mb-4">🎉</div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">You&apos;re on the list!</h1>
-          
-          {position !== null ? (
-            <>
-              <p className="text-6xl font-bold text-blue-600 my-6">#{position}</p>
-              <p className="text-gray-600 mb-8">You&apos;re position #{position} in line</p>
-            </>
-          ) : (
-            <>
-              <div className="my-6">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-              </div>
-              <p className="text-gray-600 mb-8">Calculating your position...</p>
-            </>
-          )}
-
-          <div className="border-t border-gray-200 pt-6">
-            <p className="text-sm text-gray-600 mb-4">Move up the list by sharing:</p>
-            <div className="flex gap-3 justify-center">
-              <button
-                onClick={shareOnTwitter}
-                className="px-4 py-2 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition-colors flex items-center gap-2"
-              >
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                </svg>
-                Share on X
-              </button>
-              <button
-                onClick={copyReferralLink}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center gap-2"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-                </svg>
-                Copy Link
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
