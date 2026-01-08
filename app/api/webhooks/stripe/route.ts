@@ -52,8 +52,9 @@ export async function POST(req: NextRequest) {
     console.log('[stripe-webhook] Raw body length:', rawBody.length)
     event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret)
     console.log('[stripe-webhook] Event verified successfully, type:', event.type)
-  } catch (err: any) {
-    console.error('[stripe-webhook] Signature verification failed:', err?.message)
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : String(err)
+    console.error('[stripe-webhook] Signature verification failed:', errorMessage)
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }
 
@@ -85,7 +86,7 @@ export async function POST(req: NextRequest) {
     const subscriptionId =
       typeof session.subscription === 'string'
         ? session.subscription
-        : (session.subscription as any)?.id
+        : (session.subscription as { id?: string } | null)?.id
 
     console.log('[stripe-webhook] Customer ID:', customerId)
     console.log('[stripe-webhook] Subscription ID:', subscriptionId)
@@ -129,8 +130,9 @@ export async function POST(req: NextRequest) {
     })
 
     return NextResponse.json({ received: true })
-  } catch (err: any) {
-    console.error('[stripe-webhook] Handler error:', err?.message || err)
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : String(err)
+    console.error('[stripe-webhook] Handler error:', errorMessage)
     return NextResponse.json({ error: 'Webhook handler failed' }, { status: 500 })
   }
 }

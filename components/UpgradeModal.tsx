@@ -41,9 +41,10 @@ export default function UpgradeModal({
 
       // Use a hard redirect so Stripe opens reliably in the same tab.
       window.location.href = data.url
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error('Checkout error:', e)
-      setCheckoutError(e?.message || 'Failed to start checkout')
+      const errorMessage = e instanceof Error ? e.message : 'Failed to start checkout'
+      setCheckoutError(errorMessage)
       setStartingCheckout(false)
     }
   }
@@ -92,7 +93,7 @@ export default function UpgradeModal({
             <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-8 text-center">
               <div className="text-4xl mb-3">🎣</div>
               <h2 className="text-2xl font-bold text-white mb-2">
-                You've reached your limit
+                You&apos;ve reached your limit
               </h2>
               <p className="text-blue-100">
                 {currentSignups} / {signupLimit} signups used

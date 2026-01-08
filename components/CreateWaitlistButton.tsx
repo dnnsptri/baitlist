@@ -42,7 +42,7 @@ export default function CreateWaitlistButton({
       } else {
         setShowForm(true)
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error checking limit:', err)
       setError('Failed to check limit. Please try again.')
     }
@@ -87,7 +87,7 @@ export default function CreateWaitlistButton({
       if (onWaitlistCreated) {
         onWaitlistCreated()
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error creating waitlist:', err)
       setError('Something went wrong. Please try again.')
     } finally {

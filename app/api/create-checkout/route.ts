@@ -57,11 +57,12 @@ export async function POST(req: NextRequest) {
     })
 
     return NextResponse.json({ url: session.url })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error creating checkout session:', error)
     
     // Handle Stripe-specific errors
-    if (error.type === 'StripeInvalidRequestError') {
+    const stripeError = error as { type?: string; message?: string }
+    if (stripeError.type === 'StripeInvalidRequestError') {
       return NextResponse.json(
         { error: 'Invalid request to payment provider' },
         { status: 400 }

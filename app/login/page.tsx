@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClientBrowser } from '@/lib/supabase-client'
-import { useRouter } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
 export default function Login() {
@@ -10,7 +10,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [toast, setToast] = useState<string | null>(null)
-  const router = useRouter()
+  const searchParams = useSearchParams()
   const supabase = createClientBrowser()
 
   useEffect(() => {
@@ -19,6 +19,20 @@ export default function Login() {
       return () => window.clearTimeout(t)
     }
   }, [toast])
+
+  // Check for error in URL params
+  useEffect(() => {
+    const errorParam = searchParams.get('error')
+    if (errorParam) {
+      if (errorParam === 'link_expired') {
+        setMessage('This magic link has expired or is invalid. Please request a new one.')
+      } else if (errorParam === 'missing_code') {
+        setMessage('Invalid link. Please request a new magic link.')
+      } else {
+        setMessage(errorParam)
+      }
+    }
+  }, [searchParams])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -40,8 +54,9 @@ export default function Login() {
         setEmail('')
         setToast('Check your email for the magic link!')
       }
-    } catch (error: any) {
-      setMessage(error.message || 'An error occurred')
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred'
+      setMessage(errorMessage)
     } finally {
       setLoading(false)
     }

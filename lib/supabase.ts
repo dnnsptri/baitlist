@@ -19,17 +19,17 @@ export async function createClient() {
       cookies: {
         get(name: string) {
           // #region agent log
-          try { const val = cookieStore.get(name)?.value; fetch('http://127.0.0.1:7244/ingest/382c8fcb-0fa3-42bd-87b1-6fecf8b7a1fb',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/supabase.ts:get',message:'cookie get called',data:{name,hasValue:!!val},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H2'})}).catch(()=>{}); return val; } catch(e:any) { fetch('http://127.0.0.1:7244/ingest/382c8fcb-0fa3-42bd-87b1-6fecf8b7a1fb',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/supabase.ts:get:error',message:'cookie get error',data:{name,error:e?.message},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H1'})}).catch(()=>{}); throw e; }
+          try { const val = cookieStore.get(name)?.value; fetch('http://127.0.0.1:7244/ingest/382c8fcb-0fa3-42bd-87b1-6fecf8b7a1fb',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/supabase.ts:get',message:'cookie get called',data:{name,hasValue:!!val},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H2'})}).catch(()=>{}); return val; } catch(e:unknown) { const errorMessage = e instanceof Error ? e.message : String(e); fetch('http://127.0.0.1:7244/ingest/382c8fcb-0fa3-42bd-87b1-6fecf8b7a1fb',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'lib/supabase.ts:get:error',message:'cookie get error',data:{name,error:errorMessage},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H1'})}).catch(()=>{}); throw e; }
           // #endregion
         },
-        set(name: string, value: string, options: any) {
+        set(name: string, value: string, options: { maxAge?: number; domain?: string; path?: string; sameSite?: string; secure?: boolean }) {
           try {
             cookieStore.set(name, value, options)
           } catch {
             // Ignore errors in Server Components
           }
         },
-        remove(name: string, options: any) {
+        remove(name: string, options: { maxAge?: number; domain?: string; path?: string; sameSite?: string; secure?: boolean }) {
           try {
             cookieStore.set(name, '', { ...options, maxAge: 0 })
           } catch {

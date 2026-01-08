@@ -1,47 +1,145 @@
 @import "tailwindcss";
 @import "../.subframe/ui/theme.css";
 
+/* ============================================
+   THEME CONFIGURATION - Change these to customize the entire app
+   ============================================ */
+
 :root {
+  /* Primary Brand Colors - Change these to rebrand quickly */
+  --theme-hero-bg: rgb(37, 99, 235); /* Hero section background */
+  --theme-hero-text: rgb(255, 255, 255); /* Hero text color */
+  --theme-hero-subtext: rgb(219, 234, 254); /* Hero subtitle color */
+  --theme-primary: rgb(37, 99, 235); /* Primary brand color */
+  --theme-primary-hover: rgb(29, 78, 216); /* Primary hover state */
+  
+  /* Button Colors */
+  --theme-button-primary-bg: rgb(255, 255, 255); /* Primary button background */
+  --theme-button-primary-text: rgb(29, 78, 216); /* Primary button text */
+  --theme-button-primary-hover: rgb(249, 250, 251); /* Primary button hover */
+  
+  /* Background Colors */
   --background: #ffffff;
   --foreground: #171717;
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --section-alt-bg: #f9fafb;
+  
+  /* Typography */
+  --font-heading-family: var(--font-bagel-fat-one);
+  --font-body-family: var(--font-merriweather);
+  --font-sans-family: var(--font-geist-sans);
+  
+  /* Spacing & Layout */
+  --container-max-width: 1024px;
+  --section-padding-x: 24px; /* px-6 */
+  --section-padding-y: 96px; /* py-24 */
+  --hero-padding-top: 24px; /* pt-6 */
+  --hero-padding-bottom: 128px; /* pb-32 */
+  
+  /* Typography Sizes */
+  --text-hero-title: 64px;
+  --text-hero-title-mobile: 48px;
+  --text-hero-subtitle: 20px;
+  --text-section-title: 40px;
+  --text-section-subtitle: 18px;
+  --text-feature-title: 24px;
+  --text-feature-body: 16px;
+  --text-card-title: 24px;
+  --text-card-price: 48px;
+  --text-card-price-label: 18px;
+  
+  /* Border Radius */
+  --radius-card: 16px; /* rounded-2xl */
+  --radius-button: 8px; /* rounded-lg */
+  
+  /* Transitions */
+  --transition-duration: 300ms;
+  --transition-duration-fast: 200ms;
 }
+
+.dark {
+  /* Dark mode overrides - automatically applied when .dark class is present */
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --card-bg: #1a1a1a;
+  --card-border: #333333;
+  --section-alt-bg: #111111;
+  
+  /* Adjust hero colors for dark mode if needed */
+  --theme-hero-bg: rgb(37, 99, 235);
+  --theme-hero-text: rgb(255, 255, 255);
+  --theme-hero-subtext: rgb(191, 219, 254);
+}
+
+/* ============================================
+   Theme Integration with Tailwind
+   ============================================ */
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-sans-family);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-bagel-fat-one);
-  --font-body: var(--font-merriweather);
+  --font-heading: var(--font-heading-family);
+  --font-body: var(--font-body-family);
+  
+  /* Theme colors for easy access */
+  --color-theme-hero-bg: var(--theme-hero-bg);
+  --color-theme-hero-text: var(--theme-hero-text);
+  --color-theme-hero-subtext: var(--theme-hero-subtext);
+  --color-theme-primary: var(--theme-primary);
+  --color-theme-button-bg: var(--theme-button-primary-bg);
+  --color-theme-button-text: var(--theme-button-primary-text);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* ============================================
+   Base Styles
+   ============================================ */
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-merriweather), Georgia, serif;
+  font-family: var(--font-body-family), Georgia, serif;
+  transition: background-color var(--transition-duration), color var(--transition-duration);
 }
 
 h1 {
-  font-family: var(--font-bagel-fat-one), cursive;
+  font-family: var(--font-heading-family), cursive;
 }
 
 h2, h3, h4, h5, h6 {
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-family: var(--font-sans-family), system-ui, sans-serif;
   font-weight: 700;
 }
 
 button, .btn {
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-family: var(--font-sans-family), system-ui, sans-serif;
   font-weight: 700;
 }
 
 p {
-  font-family: var(--font-merriweather), Georgia, serif;
+  font-family: var(--font-body-family), Georgia, serif;
+}
+
+/* Utility classes for theme-aware components */
+.theme-hero-bg {
+  background-color: var(--theme-hero-bg);
+}
+
+.theme-hero-text {
+  color: var(--theme-hero-text);
+}
+
+.theme-hero-subtext {
+  color: var(--theme-hero-subtext);
+}
+
+.theme-button-primary {
+  background-color: var(--theme-button-primary-bg);
+  color: var(--theme-button-primary-text);
+}
+
+.theme-button-primary:hover {
+  background-color: var(--theme-button-primary-hover);
 }

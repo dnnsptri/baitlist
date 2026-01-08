@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase'
 import { createAdminClient } from '@/lib/supabase-admin'
 
-export async function POST(req: NextRequest) {
+export async function POST(_req: NextRequest) {
   try {
     // Get current user
     const supabase = await createClient()
@@ -42,10 +42,11 @@ export async function POST(req: NextRequest) {
       message: 'Plan reset to free',
       userId: user.id,
     })
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('[reset-plan] Error:', err)
+    const errorMessage = err instanceof Error ? err.message : String(err)
     return NextResponse.json(
-      { error: 'Internal server error', details: err?.message },
+      { error: 'Internal server error', details: errorMessage },
       { status: 500 }
     )
   }

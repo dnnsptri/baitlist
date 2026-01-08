@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClientBrowser } from '@/lib/supabase-client'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 
 interface Waitlist {
   id: string
@@ -12,12 +12,12 @@ interface Waitlist {
 
 export default function PublicSignupPage() {
   const params = useParams()
+  const router = useRouter()
   const id = params.id as string
   
   const [waitlist, setWaitlist] = useState<Waitlist | null>(null)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
   const [position, setPosition] = useState<number | null>(null)
   const [error, setError] = useState('')
 
@@ -84,42 +84,20 @@ export default function PublicSignupPage() {
         return
       }
 
-      setSubmitted(true)
-      
-      // Poll for position (since scoring happens async)
-      pollForPosition(data.signupId)
-    } catch (err) {
+      // Redirect to thank-you page with score and status
+      if (data.score !== null && data.score !== undefined && data.status) {
+        router.push(`/thank-you?score=${data.score}&status=${data.status}`)
+      } else {
+        // If score not ready, redirect with signupId for polling
+        router.push(`/thank-you?signupId=${data.signupId}`)
+      }
+    } catch {
       setError('Something went wrong. Please try again.')
     } finally {
       setSubmitting(false)
     }
   }
 
-  const pollForPosition = async (signupId: string) => {
-    const supabase = createClientBrowser()
-    let attempts = 0
-    const maxAttempts = 30 // 30 seconds max
-
-    const poll = async () => {
-      const { data } = await supabase
-        .from('signups')
-        .select('position, llm_score')
-        .eq('id', signupId)
-        .single()
-
-      if (data && data.position !== null) {
-        setPosition(data.position)
-        return
-      }
-
-      attempts++
-      if (attempts < maxAttempts) {
-        setTimeout(poll, 1000)
-      }
-    }
-
-    poll()
-  }
 
   const shareOnTwitter = () => {
     const text = `I just joined the waitlist for ${waitlist?.name}! I'm #${position} in line. Check it out:`

@@ -34,6 +34,26 @@ interface SignupsTableProps {
 type SortField = 'position' | 'llm_score' | 'created_at' | 'name'
 type SortOrder = 'asc' | 'desc'
 
+// SortIcon component moved outside to avoid recreation on each render
+const SortIcon = ({ field, sortField, sortOrder }: { field: SortField; sortField: SortField; sortOrder: SortOrder }) => {
+  if (sortField !== field) {
+    return (
+      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+      </svg>
+    )
+  }
+  return sortOrder === 'asc' ? (
+    <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+    </svg>
+  ) : (
+    <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+    </svg>
+  )
+}
+
 export default function SignupsTable({ signups, waitlistName }: SignupsTableProps) {
   const [sortField, setSortField] = useState<SortField>('position')
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc')
@@ -49,8 +69,8 @@ export default function SignupsTable({ signups, waitlistName }: SignupsTableProp
   }
 
   const sortedSignups = [...signups].sort((a, b) => {
-    let aVal: any = a[sortField]
-    let bVal: any = b[sortField]
+    let aVal: string | number | null = a[sortField]
+    let bVal: string | number | null = b[sortField]
     
     // Handle nulls
     if (aVal === null) aVal = sortOrder === 'asc' ? Infinity : -Infinity
@@ -94,25 +114,6 @@ export default function SignupsTable({ signups, waitlistName }: SignupsTableProp
     })
   }
 
-  const SortIcon = ({ field }: { field: SortField }) => {
-    if (sortField !== field) {
-      return (
-        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
-        </svg>
-      )
-    }
-    return sortOrder === 'asc' ? (
-      <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-      </svg>
-    ) : (
-      <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-      </svg>
-    )
-  }
-
   if (signups.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow-lg p-8 text-center">
@@ -137,7 +138,7 @@ export default function SignupsTable({ signups, waitlistName }: SignupsTableProp
               >
                 <div className="flex items-center gap-1">
                   Position
-                  <SortIcon field="position" />
+                  <SortIcon field="position" sortField={sortField} sortOrder={sortOrder} />
                 </div>
               </th>
               <th 
@@ -146,7 +147,7 @@ export default function SignupsTable({ signups, waitlistName }: SignupsTableProp
               >
                 <div className="flex items-center gap-1">
                   Name
-                  <SortIcon field="name" />
+                  <SortIcon field="name" sortField={sortField} sortOrder={sortOrder} />
                 </div>
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -167,7 +168,7 @@ export default function SignupsTable({ signups, waitlistName }: SignupsTableProp
               >
                 <div className="flex items-center gap-1">
                   Score
-                  <SortIcon field="llm_score" />
+                  <SortIcon field="llm_score" sortField={sortField} sortOrder={sortOrder} />
                 </div>
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -179,7 +180,7 @@ export default function SignupsTable({ signups, waitlistName }: SignupsTableProp
               >
                 <div className="flex items-center gap-1">
                   Date
-                  <SortIcon field="created_at" />
+                  <SortIcon field="created_at" sortField={sortField} sortOrder={sortOrder} />
                 </div>
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">

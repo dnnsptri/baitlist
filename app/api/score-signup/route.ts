@@ -154,6 +154,21 @@ export async function POST(req: NextRequest) {
 
     const supabase = createAdminClient()
 
+    // Fetch signup to get email
+    const { data: signup, error: signupError } = await supabase
+      .from('signups')
+      .select('email, name')
+      .eq('id', signupId)
+      .single()
+
+    if (signupError || !signup) {
+      console.error('Error fetching signup:', signupError)
+      return NextResponse.json(
+        { error: 'Failed to fetch signup' },
+        { status: 500 }
+      )
+    }
+
     // Calculate position based on score
     // Get all signups for this waitlist with scores, ordered by score desc
     const { data: signups } = await supabase
@@ -166,6 +181,16 @@ export async function POST(req: NextRequest) {
     // Find position (count how many have higher scores + 1)
     const position = (signups?.filter(s => (s.llm_score ?? 0) > scoringResult.score).length ?? 0) + 1
 
+    // Determine email template based on score
+    let emailTemplate: 'instant-access' | 'priority-review' | 'waitlist'
+    if (scoringResult.score >= 92) {
+      emailTemplate = 'instant-access'
+    } else if (scoringResult.score >= 80) {
+      emailTemplate = 'priority-review'
+    } else {
+      emailTemplate = 'waitlist'
+    }
+
     // Update signup with score, position, and metadata
     const { error: updateError } = await supabase
       .from('signups')
@@ -177,7 +202,14 @@ export async function POST(req: NextRequest) {
           reasons: scoringResult.reasons,
           red_flags: scoringResult.red_flags,
           confidence: scoringResult.confidence,
-          decision: scoringResult.decision
+          decision: scoringResult.decision,
+          email_template: emailTemplate,
+          magic_link_data: {
+            score: scoringResult.score,
+            template: emailTemplate,
+            signupId: signupId,
+            waitlistId: waitlistId
+          }
         }
       })
       .eq('id', signupId)
@@ -188,6 +220,85 @@ export async function POST(req: NextRequest) {
         { error: 'Failed to update signup with score' },
         { status: 500 }
       )
+    }
+
+    // Generate magic link with custom data using admin client
+    const baseUrl = process.env.NEXT_PUBLIC_URL || 
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+    
+    // Use signInWithOtp for proper magic link with expiration handling
+    // This is the standard way and handles token expiration correctly
+    const { data: otpData, error: otpError } = await supabase.auth.signInWithOtp({
+      email: signup.email,
+      options: {
+        emailRedirectTo: `${baseUrl}/auth/callback`,
+        data: {
+          score: scoringResult.score,
+          template: emailTemplate,
+          signupId: signupId,
+          waitlistId: waitlistId
+        }
+      }
+    })
+
+    if (otpError) {
+      console.error('Error sending magic link:', otpError)
+      // Continue even if OTP send fails - the signup was successful
+    }
+
+    // Also generate a link for custom email (for users who want custom templates)
+    // This allows the Edge Function to send a custom email with the link
+    const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
+      type: 'magiclink',
+      email: signup.email,
+      options: {
+        emailRedirectTo: `${baseUrl}/auth/callback`,
+        data: {
+          score: scoringResult.score,
+          template: emailTemplate,
+          signupId: signupId,
+          waitlistId: waitlistId
+        }
+      }
+    })
+
+    // If we have a generated link, try to send custom email
+    if (!linkError && linkData?.properties?.action_link) {
+      const magicLink = linkData.properties.action_link
+
+      // Send custom email via Supabase Edge Function or API endpoint
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+      const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+      if (supabaseUrl && supabaseServiceKey) {
+        // Call Supabase Edge Function to send custom welcome email
+        // This sends a custom email with the same magic link
+        fetch(`${supabaseUrl}/functions/v1/send-welcome-email`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${supabaseServiceKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: signup.email,
+            name: signup.name || 'there',
+            score: scoringResult.score,
+            template: emailTemplate,
+            magicLink: magicLink,
+            signupId: signupId,
+            waitlistId: waitlistId,
+            waitlistName: waitlistName,
+            position: position,
+            status: status
+          })
+        }).catch(err => {
+          console.error('Error calling send-welcome-email function:', err)
+          // If Edge Function fails, the default Supabase email from signInWithOtp will still be sent
+        })
+      }
+    } else {
+      console.warn('Could not generate link for custom email:', linkError)
+      // Default Supabase email from signInWithOtp will be sent
     }
 
     // Update positions of other signups that may have shifted
@@ -215,10 +326,11 @@ export async function POST(req: NextRequest) {
       decision: scoringResult.decision
     })
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Scoring error:', error)
+    const errorMessage = error instanceof Error ? error.message : String(error)
     return NextResponse.json(
-      { error: 'Failed to score signup', details: error.message },
+      { error: 'Failed to score signup', details: errorMessage },
       { status: 500 }
     )
   }

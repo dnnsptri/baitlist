@@ -97,35 +97,67 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // 5. Trigger async scoring (don't await - happens in background)
-    const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'
-    fetch(`${baseUrl}/api/score-signup`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        signupId: signup.id,
-        waitlistId: waitlistId,
-        waitlistName: waitlist.name,
-        answers: {
-          problem: answerProblem,
-          workflow: answerWorkflow,
-          alternatives: answerAlternatives,
-          success: answerSuccess,
-          source: answerSource
-        }
+    // 5. Score the signup synchronously (wait for scoring to complete)
+    // Use the request URL to construct the internal API URL
+    const requestUrl = new URL(req.url)
+    const baseUrl = requestUrl.origin
+    
+    try {
+      const scoringResponse = await fetch(`${baseUrl}/api/score-signup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          signupId: signup.id,
+          waitlistId: waitlistId,
+          waitlistName: waitlist.name,
+          answers: {
+            problem: answerProblem,
+            workflow: answerWorkflow,
+            alternatives: answerAlternatives,
+            success: answerSuccess,
+            source: answerSource
+          }
+        })
       })
-    }).catch(err => {
-      console.error('Error triggering scoring:', err)
-    })
 
-    // 6. Return success
+      const scoringData = await scoringResponse.json()
+
+      if (scoringResponse.ok && scoringData.score !== undefined) {
+        // Determine status for thank-you page
+        let status: 'instant' | 'priority' | 'waitlist'
+        if (scoringData.score >= 92) {
+          status = 'instant'
+        } else if (scoringData.score >= 80) {
+          status = 'priority'
+        } else {
+          status = 'waitlist'
+        }
+
+        // 6. Return success with score and status
+        return NextResponse.json({
+          success: true,
+          signupId: signup.id,
+          score: scoringData.score,
+          status: status,
+          position: scoringData.position,
+          message: 'Processing your submission...'
+        })
+      }
+    } catch (err) {
+      console.error('Error scoring signup:', err)
+      // Continue to return response even if scoring fails
+    }
+
+    // Fallback: Return success without score (scoring may still happen async)
     return NextResponse.json({
       success: true,
       signupId: signup.id,
+      score: null,
+      status: 'waitlist',
       message: 'Processing your submission...'
     })
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Signup error:', error)
     return NextResponse.json(
       { error: 'Internal server error' }, 
