@@ -51,7 +51,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${merriweather.variable} ${bagelFatOne.variable} antialiased`}
       >
         {/* Google Analytics */}
-        <Script
+        {/*<Script
           src="https://www.googletagmanager.com/gtag/js?id=G-E88E0C22F8"
           strategy="afterInteractive"
         />
@@ -62,7 +62,7 @@ export default function RootLayout({
             gtag('js', new Date());
             gtag('config', 'G-E88E0C22F8');
           `}
-        </Script>
+        </Script>*/} 
         {children}
       </body>
     </html>
